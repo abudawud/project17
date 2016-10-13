@@ -172,7 +172,7 @@ void jalan(char lSpeed, char rSpeed) {
       Dynamixel.moveSpeed(ILEG2_A, LEG2_A[1] - (rSpeed / 2), speed0);
       Dynamixel.moveSpeed(ILEG3_A, LEG3_A[1], speed0);
       Dynamixel.moveSpeed(ILEG4_A, LEG4_A[1] + lSpeed, speed0);
-      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[1] - (lSpeed / 2, speed0);
+      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[1] - (lSpeed / 2), speed0);
       Dynamixel.moveSpeed(ILEG6_A, LEG6_A[1], speed0);
       delay(timer1);
     break;
