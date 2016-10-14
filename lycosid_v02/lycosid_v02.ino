@@ -1,3 +1,25 @@
+/*
+............::LYCOSID PROJECT 2017::...............
+* COPYRIGHT
+    Copyright (C) 2016  IR64 POLITEKNIK NEGERI JEMBER, http://www.polije.ac.id/
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+* AUTHOR
+    Ahmad Waris Al H (warishafidz@gmail.com)
+    ... (Dedy)
+    ... (Nashrul)
+    ... (Retno)
+*/
+
 #include <DynamixelSerial.h>
 
 #define ILEG1_A  1
@@ -59,7 +81,7 @@ int
     
 void setup();
 void loop();
-void jalan();
+void jalan(char lSpeed, char rSpeed);
 
 void setup() {
   int i;
@@ -81,12 +103,23 @@ void setup() {
 }
 
 void loop(){
-  jalan();
+  jalan(10, 20);
 }
 
-void jalan(int lSpeed, int rSpeed) {
+void jalan(char lSpeed, char rSpeed) {
+  if (lSpeed > MSPEED)
+    lSpeed = MSPEED;
+  else if (lSpeed < 0)
+    lSpeed = 0;
+
+  if (rSpeed > MSPEED)
+    rSpeed = MSPEED;
+  else if(rSpeed < 0)
+    rSpeed = 0;
+
   lSpeed = MAP(MSPEED - lSpeed);
   rSpeed = MAP(MSPEED - rSpeed);
+  
   switch (steps){
     case 0:
       Dynamixel.moveSpeed(ILEG1_A, LEG1_A[0], speed0);
@@ -145,11 +178,11 @@ void jalan(int lSpeed, int rSpeed) {
     break;
 
     case 2:
-      Dynamixel.moveSpeed(ILEG1_A, LEG1_A[2], speed0);
-      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[2], speed0);
+      Dynamixel.moveSpeed(ILEG1_A, LEG1_A[2] + rSpeed, speed0);
+      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[2] - (rSpeed / 2), speed0);
       Dynamixel.moveSpeed(ILEG3_A, LEG3_A[2], speed0);
-      Dynamixel.moveSpeed(ILEG4_A, LEG4_A[2], speed0);
-      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[2], speed0);
+      Dynamixel.moveSpeed(ILEG4_A, LEG4_A[2] + lSpeed, speed0);
+      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[2] - (lSpeed / 2), speed0);
       Dynamixel.moveSpeed(ILEG6_A, LEG6_A[2], speed0);
   
       delay(timer0);
@@ -179,11 +212,11 @@ void jalan(int lSpeed, int rSpeed) {
       Dynamixel.moveSpeed(ILEG1_B, LEG1_B[3], speed1);
       Dynamixel.moveSpeed(ILEG1_C, LEG1_C[3], speed1);
   
-      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[3] + (rSpeed / 2), speed0);
       Dynamixel.moveSpeed(ILEG2_B, LEG2_B[3], speed1);
       Dynamixel.moveSpeed(ILEG2_C, LEG2_C[3], speed1);
   
-      Dynamixel.moveSpeed(ILEG3_A, LEG3_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG3_A, LEG3_A[3] - rSpeed, speed0);
       Dynamixel.moveSpeed(ILEG3_B, LEG3_B[3], speed1);
       Dynamixel.moveSpeed(ILEG3_C, LEG3_C[3], speed1);
   
@@ -191,11 +224,11 @@ void jalan(int lSpeed, int rSpeed) {
       Dynamixel.moveSpeed(ILEG4_B, LEG4_B[3], speed1);
       Dynamixel.moveSpeed(ILEG4_C, LEG4_C[3], speed1);
   
-      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[3] + (lSpeed / 2), speed0);
       Dynamixel.moveSpeed(ILEG5_B, LEG5_B[3], speed1);
       Dynamixel.moveSpeed(ILEG5_C, LEG5_C[3], speed1);
   
-      Dynamixel.moveSpeed(ILEG6_A, LEG6_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG6_A, LEG6_A[3] - lSpeed, speed0);
       Dynamixel.moveSpeed(ILEG6_B, LEG6_B[3], speed1);
       Dynamixel.moveSpeed(ILEG6_C, LEG6_C[3], speed1); 
       delay(timer1);
