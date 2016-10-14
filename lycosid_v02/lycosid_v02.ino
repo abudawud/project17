@@ -24,33 +24,13 @@
 #define speed0   100
 #define speed1   100
 
+#define MSPEED   25
 #define MAP(x)  ((int)map(x, 0, 300, 0, 1023))
 
-//int 
-//  LEG1_A [4] = {MAP(140), MAP(125), MAP(110), MAP(125)},
-//  LEG1_B [4] = {MAP(150), MAP(160), MAP(150), MAP(150)},
-//  LEG1_C [4] = {MAP(150), MAP(180), MAP(150), MAP(150)},
-//
-//  LEG2_A [4] = {MAP(135), MAP(150), MAP(165), MAP(135)},
-//  LEG2_B [4] = {MAP(150), MAP(150), MAP(150), MAP(150)},
-//  LEG2_C [4] = {MAP(150), MAP(150), MAP(150), MAP(180)},
-//  
-//  LEG3_A [4] = {MAP(190), MAP(175), MAP(160), MAP(175)},
-//  LEG3_B [4] = {MAP(150), MAP(150), MAP(150), MAP(150)},
-//  LEG3_C [4] = {MAP(150), MAP(180), MAP(150), MAP(150)},
-//
-//  LEG4_A [4] = {MAP(140), MAP(125), MAP(110), MAP(125)},
-//  LEG4_B [4] = {MAP(150), MAP(150), MAP(150), MAP(150)},
-//  LEG4_C [4] = {MAP(150), MAP(150), MAP(150), MAP(120)},
-//  
-//  LEG5_A [4] = {MAP(135), MAP(150), MAP(165), MAP(135)},
-//  LEG5_B [4] = {MAP(150), MAP(150), MAP(150), MAP(150)},
-//  LEG5_C [4] = {MAP(150), MAP(120), MAP(150), MAP(150)},
-//  
-//  LEG6_A [4] = {MAP(190), MAP(175), MAP(160), MAP(175)},
-//  LEG6_B [4] = {MAP(150), MAP(150), MAP(150), MAP(150)},
-//  LEG6_C [4] = {MAP(150), MAP(150), MAP(150), MAP(120)};
+// variabel untuk menyimpan langkah terahir
+unsigned char steps = 0;  
 
+// langkah kaki tiap sendi
 int
   LEG1_A [4] = {MAP(135), MAP(115), MAP(115), MAP(135)},
   LEG1_B [4] = {MAP(170), MAP(190), MAP(170), MAP(170)},
@@ -76,7 +56,10 @@ int
   LEG6_B [4] = {MAP(170), MAP(170), MAP(170), MAP(190)},
   LEG6_C [4] = {MAP(130), MAP(130), MAP(130), MAP(110)};
 
-  
+    
+void setup();
+void loop();
+void jalan();
 
 void setup() {
   int i;
@@ -97,110 +80,128 @@ void setup() {
   digitalWrite(13, LOW);
 }
 
-void loop() {
-  Dynamixel.moveSpeed(ILEG1_A, LEG1_A[0], speed0);
-  Dynamixel.moveSpeed(ILEG1_B, LEG1_B[0], speed1);
-  Dynamixel.moveSpeed(ILEG1_C, LEG1_C[0], speed1);
-  
-  Dynamixel.moveSpeed(ILEG2_A, LEG2_A[0], speed0);
-  Dynamixel.moveSpeed(ILEG2_B, LEG2_B[0], speed1);
-  Dynamixel.moveSpeed(ILEG2_C, LEG2_C[0], speed1);
-  
-  Dynamixel.moveSpeed(ILEG3_A, LEG3_A[0], speed0);
-  Dynamixel.moveSpeed(ILEG3_B, LEG3_B[0], speed1);
-  Dynamixel.moveSpeed(ILEG3_C, LEG3_C[0], speed1);
-  
-  Dynamixel.moveSpeed(ILEG4_A, LEG4_A[0], speed0);
-  Dynamixel.moveSpeed(ILEG4_B, LEG4_B[0], speed1);
-  Dynamixel.moveSpeed(ILEG4_C, LEG4_C[0], speed1);
-  
-  Dynamixel.moveSpeed(ILEG5_A, LEG5_A[0], speed0);
-  Dynamixel.moveSpeed(ILEG5_B, LEG5_B[0], speed1);
-  Dynamixel.moveSpeed(ILEG5_C, LEG5_C[0], speed0);
-  
-  Dynamixel.moveSpeed(ILEG6_A, LEG6_A[0], speed0);
-  Dynamixel.moveSpeed(ILEG6_B, LEG6_B[0], speed1);
-  Dynamixel.moveSpeed(ILEG6_C, LEG6_C[0], speed1); 
-  delay(timer1);
-  
-  Dynamixel.moveSpeed(ILEG1_C, LEG1_C[1], speed1);
-  Dynamixel.moveSpeed(ILEG1_B, LEG1_B[1], speed1);
-  
-  Dynamixel.moveSpeed(ILEG2_C, LEG2_C[1], speed1);
-  Dynamixel.moveSpeed(ILEG2_B, LEG2_B[1], speed1);
+void loop(){
+  jalan();
+}
 
-  Dynamixel.moveSpeed(ILEG3_C, LEG3_C[1], speed1);
-  Dynamixel.moveSpeed(ILEG3_B, LEG3_B[1], speed1);
+void jalan(int lSpeed, int rSpeed) {
+  lSpeed = MAP(MSPEED - lSpeed);
+  rSpeed = MAP(MSPEED - rSpeed);
+  switch (steps){
+    case 0:
+      Dynamixel.moveSpeed(ILEG1_A, LEG1_A[0], speed0);
+      Dynamixel.moveSpeed(ILEG1_B, LEG1_B[0], speed1);
+      Dynamixel.moveSpeed(ILEG1_C, LEG1_C[0], speed1);
   
-  Dynamixel.moveSpeed(ILEG4_C, LEG4_C[1], speed1);
-  Dynamixel.moveSpeed(ILEG4_B, LEG4_B[1], speed1);
+      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[0] + (rSpeed / 2), speed0);
+      Dynamixel.moveSpeed(ILEG2_B, LEG2_B[0], speed1);
+      Dynamixel.moveSpeed(ILEG2_C, LEG2_C[0], speed1);
   
-  Dynamixel.moveSpeed(ILEG5_C, LEG5_C[1], speed1);
-  Dynamixel.moveSpeed(ILEG5_B, LEG5_B[1], speed1);
+      Dynamixel.moveSpeed(ILEG3_A, LEG3_A[0] - rSpeed, speed0);
+      Dynamixel.moveSpeed(ILEG3_B, LEG3_B[0], speed1);
+      Dynamixel.moveSpeed(ILEG3_C, LEG3_C[0], speed1);
+  
+      Dynamixel.moveSpeed(ILEG4_A, LEG4_A[0], speed0);
+      Dynamixel.moveSpeed(ILEG4_B, LEG4_B[0], speed1);
+      Dynamixel.moveSpeed(ILEG4_C, LEG4_C[0], speed1);
+  
+      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[0] + (lSpeed / 2), speed0);
+      Dynamixel.moveSpeed(ILEG5_B, LEG5_B[0], speed1);
+      Dynamixel.moveSpeed(ILEG5_C, LEG5_C[0], speed0);
+  
+      Dynamixel.moveSpeed(ILEG6_A, LEG6_A[0] - lSpeed, speed0);
+      Dynamixel.moveSpeed(ILEG6_B, LEG6_B[0], speed1);
+      Dynamixel.moveSpeed(ILEG6_C, LEG6_C[0], speed1); 
+      delay(timer1);
+    break;
+
+    case 1:
+      Dynamixel.moveSpeed(ILEG1_C, LEG1_C[1], speed1);
+      Dynamixel.moveSpeed(ILEG1_B, LEG1_B[1], speed1);
+  
+      Dynamixel.moveSpeed(ILEG2_C, LEG2_C[1], speed1);
+      Dynamixel.moveSpeed(ILEG2_B, LEG2_B[1], speed1);
+
+      Dynamixel.moveSpeed(ILEG3_C, LEG3_C[1], speed1);
+      Dynamixel.moveSpeed(ILEG3_B, LEG3_B[1], speed1);
+  
+      Dynamixel.moveSpeed(ILEG4_C, LEG4_C[1], speed1);
+      Dynamixel.moveSpeed(ILEG4_B, LEG4_B[1], speed1);
+  
+      Dynamixel.moveSpeed(ILEG5_C, LEG5_C[1], speed1);
+      Dynamixel.moveSpeed(ILEG5_B, LEG5_B[1], speed1);
     
-  Dynamixel.moveSpeed(ILEG6_C, LEG6_C[1], speed1);
-  Dynamixel.moveSpeed(ILEG6_B, LEG6_B[1], speed1);
+      Dynamixel.moveSpeed(ILEG6_C, LEG6_C[1], speed1);
+      Dynamixel.moveSpeed(ILEG6_B, LEG6_B[1], speed1);
 
-  delay(timer0);
-  Dynamixel.moveSpeed(ILEG1_A, LEG1_A[1], speed0);
-  Dynamixel.moveSpeed(ILEG2_A, LEG2_A[1], speed0);
-  Dynamixel.moveSpeed(ILEG3_A, LEG3_A[1], speed0);
-  Dynamixel.moveSpeed(ILEG4_A, LEG4_A[1], speed0);
-  Dynamixel.moveSpeed(ILEG5_A, LEG5_A[1], speed0);
-  Dynamixel.moveSpeed(ILEG6_A, LEG6_A[1], speed0);
+      delay(timer0);
+      Dynamixel.moveSpeed(ILEG1_A, LEG1_A[1] + rSpeed, speed0);
+      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[1] - (rSpeed / 2), speed0);
+      Dynamixel.moveSpeed(ILEG3_A, LEG3_A[1], speed0);
+      Dynamixel.moveSpeed(ILEG4_A, LEG4_A[1] + lSpeed, speed0);
+      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[1] - (lSpeed / 2, speed0);
+      Dynamixel.moveSpeed(ILEG6_A, LEG6_A[1], speed0);
+      delay(timer1);
+    break;
 
-  delay(timer1);
+    case 2:
+      Dynamixel.moveSpeed(ILEG1_A, LEG1_A[2], speed0);
+      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[2], speed0);
+      Dynamixel.moveSpeed(ILEG3_A, LEG3_A[2], speed0);
+      Dynamixel.moveSpeed(ILEG4_A, LEG4_A[2], speed0);
+      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[2], speed0);
+      Dynamixel.moveSpeed(ILEG6_A, LEG6_A[2], speed0);
   
-  Dynamixel.moveSpeed(ILEG1_A, LEG1_A[2], speed0);
-  Dynamixel.moveSpeed(ILEG2_A, LEG2_A[2], speed0);
-  Dynamixel.moveSpeed(ILEG3_A, LEG3_A[2], speed0);
-  Dynamixel.moveSpeed(ILEG4_A, LEG4_A[2], speed0);
-  Dynamixel.moveSpeed(ILEG5_A, LEG5_A[2], speed0);
-  Dynamixel.moveSpeed(ILEG6_A, LEG6_A[2], speed0);
+      delay(timer0);
+      Dynamixel.moveSpeed(ILEG1_C, LEG1_C[2], speed1);
+      Dynamixel.moveSpeed(ILEG1_B, LEG1_B[2], speed1);
   
-  delay(timer0);
-  Dynamixel.moveSpeed(ILEG1_C, LEG1_C[2], speed1);
-  Dynamixel.moveSpeed(ILEG1_B, LEG1_B[2], speed1);
-  
-  Dynamixel.moveSpeed(ILEG2_C, LEG2_C[2], speed1);
-  Dynamixel.moveSpeed(ILEG2_B, LEG2_B[1], speed1);
+      Dynamixel.moveSpeed(ILEG2_C, LEG2_C[2], speed1);
+      Dynamixel.moveSpeed(ILEG2_B, LEG2_B[1], speed1);
 
-  Dynamixel.moveSpeed(ILEG3_C, LEG3_C[2], speed1);
-  Dynamixel.moveSpeed(ILEG3_B, LEG3_B[2], speed1);
+      Dynamixel.moveSpeed(ILEG3_C, LEG3_C[2], speed1);
+      Dynamixel.moveSpeed(ILEG3_B, LEG3_B[2], speed1);
   
-  Dynamixel.moveSpeed(ILEG4_C, LEG4_C[2], speed1);
-  Dynamixel.moveSpeed(ILEG4_B, LEG4_B[2], speed1);
+      Dynamixel.moveSpeed(ILEG4_C, LEG4_C[2], speed1);
+      Dynamixel.moveSpeed(ILEG4_B, LEG4_B[2], speed1);
   
-  Dynamixel.moveSpeed(ILEG5_C, LEG5_C[2], speed1);
-  Dynamixel.moveSpeed(ILEG5_B, LEG5_B[2], speed1);
+      Dynamixel.moveSpeed(ILEG5_C, LEG5_C[2], speed1);
+      Dynamixel.moveSpeed(ILEG5_B, LEG5_B[2], speed1);
    
-  Dynamixel.moveSpeed(ILEG6_C, LEG6_C[2], speed1);
-  Dynamixel.moveSpeed(ILEG6_B, LEG6_B[2], speed1);
+      Dynamixel.moveSpeed(ILEG6_C, LEG6_C[2], speed1);
+      Dynamixel.moveSpeed(ILEG6_B, LEG6_B[2], speed1);
 
-  delay(timer1);
+      delay(timer1);
+    break;
+
+    case 3:
+      Dynamixel.moveSpeed(ILEG1_A, LEG1_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG1_B, LEG1_B[3], speed1);
+      Dynamixel.moveSpeed(ILEG1_C, LEG1_C[3], speed1);
   
-  Dynamixel.moveSpeed(ILEG1_A, LEG1_A[3], speed0);
-  Dynamixel.moveSpeed(ILEG1_B, LEG1_B[3], speed1);
-  Dynamixel.moveSpeed(ILEG1_C, LEG1_C[3], speed1);
+      Dynamixel.moveSpeed(ILEG2_A, LEG2_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG2_B, LEG2_B[3], speed1);
+      Dynamixel.moveSpeed(ILEG2_C, LEG2_C[3], speed1);
   
-  Dynamixel.moveSpeed(ILEG2_A, LEG2_A[3], speed0);
-  Dynamixel.moveSpeed(ILEG2_B, LEG2_B[3], speed1);
-  Dynamixel.moveSpeed(ILEG2_C, LEG2_C[3], speed1);
+      Dynamixel.moveSpeed(ILEG3_A, LEG3_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG3_B, LEG3_B[3], speed1);
+      Dynamixel.moveSpeed(ILEG3_C, LEG3_C[3], speed1);
   
-  Dynamixel.moveSpeed(ILEG3_A, LEG3_A[3], speed0);
-  Dynamixel.moveSpeed(ILEG3_B, LEG3_B[3], speed1);
-  Dynamixel.moveSpeed(ILEG3_C, LEG3_C[3], speed1);
+      Dynamixel.moveSpeed(ILEG4_A, LEG4_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG4_B, LEG4_B[3], speed1);
+      Dynamixel.moveSpeed(ILEG4_C, LEG4_C[3], speed1);
   
-  Dynamixel.moveSpeed(ILEG4_A, LEG4_A[3], speed0);
-  Dynamixel.moveSpeed(ILEG4_B, LEG4_B[3], speed1);
-  Dynamixel.moveSpeed(ILEG4_C, LEG4_C[3], speed1);
+      Dynamixel.moveSpeed(ILEG5_A, LEG5_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG5_B, LEG5_B[3], speed1);
+      Dynamixel.moveSpeed(ILEG5_C, LEG5_C[3], speed1);
   
-  Dynamixel.moveSpeed(ILEG5_A, LEG5_A[3], speed0);
-  Dynamixel.moveSpeed(ILEG5_B, LEG5_B[3], speed1);
-  Dynamixel.moveSpeed(ILEG5_C, LEG5_C[3], speed1);
-  
-  Dynamixel.moveSpeed(ILEG6_A, LEG6_A[3], speed0);
-  Dynamixel.moveSpeed(ILEG6_B, LEG6_B[3], speed1);
-  Dynamixel.moveSpeed(ILEG6_C, LEG6_C[3], speed1); 
-  delay(timer1);
+      Dynamixel.moveSpeed(ILEG6_A, LEG6_A[3], speed0);
+      Dynamixel.moveSpeed(ILEG6_B, LEG6_B[3], speed1);
+      Dynamixel.moveSpeed(ILEG6_C, LEG6_C[3], speed1); 
+      delay(timer1);
+    break;
+  }
+  steps++;
+  if (steps > 3)
+    steps = 0;
 }
